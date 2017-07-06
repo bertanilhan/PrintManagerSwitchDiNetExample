@@ -1,5 +1,2 @@
-Request'deki parametreler göre instance factory dinamik olarak instance oluşturur.
-
-http://localhost:XXXXX/Print                           => BasePrintManager'dan örnek oluşturur.
-http://localhost:XXXXX/Print?Device=Xerox              => XeroxPrintManager'dan örnek oluşturur.
-http://localhost:XXXXX/Print?Device=KonicaMinolta      => KonicaMinoltaManager'dan örnek oluşturur.
+<p>Request'deki parametrelere g&ouml;re instance factory dinamik olarak instance oluşturur.</p>
+<p><a href="http://localhost:XXXXX/Print ">http://localhost:XXXXX/Print </a>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;=&gt; BasePrintManager'dan &ouml;rnek oluşturur.<br /><a href="http://localhost:XXXXX/Print?Device=Xerox ">http://localhost:XXXXX/Print?Device=Xerox </a>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;=&gt; XeroxPrintManager'dan &ouml;rnek oluşturur.<br />http://localhost:XXXXX/Print?Device=KonicaMinolta &nbsp; &nbsp; &nbsp; &nbsp;=&gt; KonicaMinoltaManager'dan &ouml;rnek oluşturur.</p>
