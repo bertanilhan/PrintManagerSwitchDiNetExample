@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
-using System.Web.UI.WebControls;
 using Ninject;
 using Ninject.Modules;
-using PrintManagerSwitchDiNetExample.Business.Concrete;
 using PrintManagerSwitchDiNetExample.Business.DependencyResolvers;
 
 namespace PrintManagerSwitchDiNetExample.WebUi.Utilities
