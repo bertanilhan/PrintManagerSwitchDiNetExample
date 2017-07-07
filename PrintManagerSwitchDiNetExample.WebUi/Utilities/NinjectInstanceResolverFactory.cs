@@ -22,35 +22,38 @@ namespace PrintManagerSwitchDiNetExample.WebUi.Utilities
 
         public IController GetInstance(Type controllerType, string query)
         {
-            INinjectModule module;
-            //Değişken modüller çakışmaması için ilk önce siliniyor.
-            //Gelen parametrelere göre yeni modüller yükleniyor.
-            CleanModules(); //Aspect Olabilir.
-
             //Eğer query ile eşleşen yok ise base class'dan bilgiyi alarak sistemin hata vermesi engellenmiştir.
             switch (query)
             {
                 case "Xerox":
                     {
-                        module = _veriableModules.SingleOrDefault(x => x.Name == typeof(XeroxBusinessModule).FullName);
-                        _kernel.Load(module);
-
-                        return (IController)_kernel.Get(controllerType);
+                        return GetInstanceHelper(controllerType, typeof(XeroxBusinessModule));
                     }
                 case "KonicaMinolta":
                     {
-                        module = _veriableModules.SingleOrDefault(x => x.Name == typeof(KonicaMinoltaBusinessModule).FullName);
-                        _kernel.Load(module);
-
-                        return (IController)_kernel.Get(controllerType);
+                        return GetInstanceHelper(controllerType, typeof(KonicaMinoltaBusinessModule));
                     }
 
                 default:
-                    module = _veriableModules.SingleOrDefault(x => x.Name == typeof(BaseBusinessModule).FullName);
-                    _kernel.Load(module);
-
-                    return (IController)_kernel.Get(controllerType);
+                    return GetInstanceHelper(controllerType, typeof(BaseBusinessModule));
             }
+        }
+
+        private IController GetInstanceHelper(Type controllerType, Type injectModule)
+        {
+            //Değişken modüller çakışmaması için ilk önce siliniyor.
+            //Gelen parametrelere göre yeni modüller yükleniyor.
+            CleanModules(); //Aspect Olabilir.
+
+            //Modüller dizizinden istenilen modül alınıyor.
+            var module = _veriableModules.SingleOrDefault(x => x.Name == injectModule.FullName);
+
+            //IKernel'a mdül yüklenir.
+            _kernel.Load(module);
+
+            //Instance alınır.
+            var instance = (IController)_kernel.Get(controllerType);
+            return instance;
         }
 
         private void CleanModules()
