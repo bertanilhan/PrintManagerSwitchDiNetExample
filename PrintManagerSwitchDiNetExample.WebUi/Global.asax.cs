@@ -20,7 +20,7 @@ namespace PrintManagerSwitchDiNetExample.WebUi
             AreaRegistration.RegisterAllAreas();
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
-
+            //----------Middleware----------
             //Sabit olan modüller bu alana dizilecektir.
             var constantModule = new INinjectModule[]
             {
@@ -37,13 +37,15 @@ namespace PrintManagerSwitchDiNetExample.WebUi
             };
 
             //Eğer modüllerin otomatik olarak gelmesini istersek modülleri "IVariableModule" ve "IConstantModule" ile işaretlemek gerekir
-            //Reflection kodu NinjectInstanceResolverFactory yazılır.
+            //Reflection kodu Middleware içine yazılmalıdır.
 
             //var moduleTypes = AppDomain.CurrentDomain.GetAssemblies()
             //    .SelectMany(s => s.GetTypes())
             //    .Where(p => typeof(IVeriableModule).IsAssignableFrom(p) && !p.IsInterface);
 
             ControllerBuilder.Current.SetControllerFactory(new NinjectControllerFactory(new NinjectInstanceResolverFactory(veriableModules,constantModule)));
+
+            //----------Middleware----------
         }
     }
 }
