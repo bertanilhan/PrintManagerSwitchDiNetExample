@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
-using System.Reflection;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using Ninject.Modules;
-using PrintManagerSwitchDiNetExample.Business.Abstract;
-using PrintManagerSwitchDiNetExample.Business.DependencyResolvers;
 using PrintManagerSwitchDiNetExample.Business.DependencyResolvers.Modules;
+using PrintManagerSwitchDiNetExample.Business.DependencyResolvers.Resolvers;
 using PrintManagerSwitchDiNetExample.WebUi.Utilities;
 
 namespace PrintManagerSwitchDiNetExample.WebUi
@@ -23,14 +17,22 @@ namespace PrintManagerSwitchDiNetExample.WebUi
 
             //----------Middleware----------
 
-            //Eğer modüllerin otomatik olarak gelmesini istersek modülleri reflection ile çözülebilir.
             //Reflection kodu Middleware içine yazılmalıdır.
 
+            //Bu sınıf sadece bir kere çalıştığı için performans açısından reflection'ları bu sınıfta yapılmalıdır.
+            //IResolver tipini implemente eden tüm gerçek sınıflar alınıyor.
+            var resolverTypes = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(s => s.GetTypes())
+                .Where(p => typeof(IResolver).IsAssignableFrom(p) && !p.IsInterface && !p.IsAbstract);
+
+            ////NinjectModule tipini implemente eden tüm gerçek sınıflar alınıyor.
+            ////Eğer modüllerin otomatik olarak yüklenmesini istersek bu reflection kodundan yararlanabiliriz.
             //var moduleTypes = AppDomain.CurrentDomain.GetAssemblies()
             //    .SelectMany(s => s.GetTypes())
-            //    .Where(p => typeof(IVeriableModule).IsAssignableFrom(p) && !p.IsInterface && !p.IsAbstract);
+            //    .Where(p => typeof(NinjectModule).IsAssignableFrom(p) && !typeof(NinjectResolverBase).IsAssignableFrom(p) && !p.IsInterface && !p.IsAbstract);
 
-            ControllerBuilder.Current.SetControllerFactory(new NinjectControllerFactory(new NinjectInstanceResolverFactory(new BusinessModule())));
+
+            ControllerBuilder.Current.SetControllerFactory(new NinjectControllerFactory(new NinjectInstanceResolverFactory(new BusinessModule(),resolverTypes)));
 
             //----------Middleware----------
         }

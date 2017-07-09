@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Web.Mvc;
@@ -13,25 +14,22 @@ namespace PrintManagerSwitchDiNetExample.WebUi.Utilities
     public class NinjectInstanceResolverFactory
     {
         private readonly IKernel _kernel;
+        private readonly IEnumerable<Type> _resolverTypes;
 
         public NinjectInstanceResolverFactory(INinjectModule[] constantModules)
         {
             _kernel = new StandardKernel(constantModules);
         }
-        public NinjectInstanceResolverFactory(INinjectModule constantModule)
+        public NinjectInstanceResolverFactory(INinjectModule constantModule, IEnumerable<Type> resolverTypes)
         {
             _kernel = new StandardKernel(constantModule);
+            _resolverTypes = resolverTypes;
         }
 
         public IController GetInstance(Type controllerType, NameValueCollection queries)
         {
-            //IResolver tipini implemente eden tüm gerçek sınıflar alınıyor.
-            var resolverTypes = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(s => s.GetTypes())
-                .Where(p => typeof(IResolver).IsAssignableFrom(p) && !p.IsInterface && !p.IsAbstract);
-
             //Her tip için 
-            foreach (var resolverType in resolverTypes)
+            foreach (var resolverType in _resolverTypes)
             {
                 //Her query farklı olduğu için gelen modülde farklı olacaktır.
                 var moduleInstance = (INinjectModule) Activator.CreateInstance(resolverType, queries);
