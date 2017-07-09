@@ -39,7 +39,7 @@ namespace PrintManagerSwitchDiNetExample.WebUi.Utilities
                 //Gelen modülün Kernel'da olup olmadığı kontrol edilir.
                 if (_kernel.HasModule(moduleInstance.Name) /*&& Modül değişmiş ise*/)
                 {
-                    var xxx = moduleInstance.Kernel;
+
                     //Eğer Kernel'da var ise modül silinir. Çünkü içeriği farklı.
                     //Problem: Eğer query demişmediği halde modülleri silip tekrar yüklüyor. Eğer modül değişmemişse silmesin.
                     //Çözüm önerisi queryleri karşılaştıran bir proxy sınıf ile çözülebilir.
