@@ -1,69 +1,60 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Web.Mvc;
 using Ninject;
 using Ninject.Modules;
+using Ninject.Planning.Bindings;
 using PrintManagerSwitchDiNetExample.Business.DependencyResolvers;
+using PrintManagerSwitchDiNetExample.Business.DependencyResolvers.Resolvers;
 
 namespace PrintManagerSwitchDiNetExample.WebUi.Utilities
 {
     public class NinjectInstanceResolverFactory
     {
         private readonly IKernel _kernel;
-        private readonly INinjectModule[] _veriableModules;
 
-        public NinjectInstanceResolverFactory(INinjectModule[] veriableModules, INinjectModule[] constantModules)
+        public NinjectInstanceResolverFactory(INinjectModule[] constantModules)
         {
-            _veriableModules = veriableModules;
             _kernel = new StandardKernel(constantModules);
         }
-
-        public IController GetInstance(Type controllerType, string query)
+        public NinjectInstanceResolverFactory(INinjectModule constantModule)
         {
-            //Eğer query ile eşleşen yok ise base class'dan bilgiyi alarak sistemin hata vermesi engellenmiştir.
-            switch (query)
-            {
-                case "Xerox":
-                    {
-                        return GetInstanceHelper(controllerType, typeof(XeroxBusinessModule));
-                    }
-                case "KonicaMinolta":
-                    {
-                        return GetInstanceHelper(controllerType, typeof(KonicaMinoltaBusinessModule));
-                    }
-
-                default:
-                    return GetInstanceHelper(controllerType, typeof(BaseBusinessModule));
-            }
+            _kernel = new StandardKernel(constantModule);
         }
 
-        private IController GetInstanceHelper(Type controllerType, Type injectModule)
+        public IController GetInstance(Type controllerType, NameValueCollection queries)
         {
-            //Değişken modüller çakışmaması için ilk önce siliniyor.
-            //Gelen parametrelere göre yeni modüller yükleniyor.
-            CleanModules(); //Aspect Olabilir.
+            //IResolver tipini implemente eden tüm gerçek sınıflar alınıyor.
+            var resolverTypes = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(s => s.GetTypes())
+                .Where(p => typeof(IResolver).IsAssignableFrom(p) && !p.IsInterface && !p.IsAbstract);
 
-            //Modüller dizizinden istenilen modül alınıyor.
-            var module = _veriableModules.SingleOrDefault(x => x.Name == injectModule.FullName);
-
-            //IKernel'a mdül yüklenir.
-            _kernel.Load(module);
-
-            //Instance alınır.
-            var instance = (IController)_kernel.Get(controllerType);
-            return instance;
-        }
-
-        private void CleanModules()
-        {
-            foreach (var module in _veriableModules)
+            //Her tip için 
+            foreach (var resolverType in resolverTypes)
             {
-                // Eğer değişken modüller var ise silinirler.
-                if (_kernel.HasModule(module.Name))
+                //Her query farklı olduğu için gelen modülde farklı olacaktır.
+                var moduleInstance = (INinjectModule) Activator.CreateInstance(resolverType, queries);
+
+                //Gelen modülün Kernel'da olup olmadığı kontrol edilir.
+                if (_kernel.HasModule(moduleInstance.Name) /*&& Modül değişmiş ise*/)
                 {
-                    _kernel.Unload(module.Name);
+                    var xxx = moduleInstance.Kernel;
+                    //Eğer Kernel'da var ise modül silinir. Çünkü içeriği farklı.
+                    //Problem: Eğer query demişmediği halde modülleri silip tekrar yüklüyor. Eğer modül değişmemişse silmesin.
+                    //Çözüm önerisi queryleri karşılaştıran bir proxy sınıf ile çözülebilir.
+                    _kernel.Unload(moduleInstance.Name);
                 }
+
+                //Değişen modülleri tekrar yükle.
+                _kernel.Load(moduleInstance);
             }
+
+            //Kontroller tipine göre çözümlemeleri döndür.
+            var currentTypeInstance = (IController)_kernel.Get(controllerType);
+            return currentTypeInstance;
         }
+
+
     }
 }

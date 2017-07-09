@@ -1,6 +1,6 @@
 ﻿using PrintManagerSwitchDiNetExample.Business.Abstract;
 
-namespace PrintManagerSwitchDiNetExample.Business.Concrete
+namespace PrintManagerSwitchDiNetExample.Business.Concrete.PrintManagers
 {
     public class PrintManagerBase:IPrintService
     {

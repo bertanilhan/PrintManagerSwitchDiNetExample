@@ -43,14 +43,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstract\ICreditCardService.cs" />
     <Compile Include="Abstract\IPrintService.cs" />
-    <Compile Include="Concrete\KonicaMinoltaPrintManager.cs" />
-    <Compile Include="Concrete\XeroxPrintManager.cs" />
-    <Compile Include="DependencyResolvers\BaseBusinessModule.cs" />
-    <Compile Include="DependencyResolvers\BusinessModule.cs" />
-    <Compile Include="DependencyResolvers\KonicaMinoltaBusinessModule.cs" />
-    <Compile Include="Concrete\PrintManagerBase.cs" />
-    <Compile Include="DependencyResolvers\XeroxBusinessModule.cs" />
+    <Compile Include="Concrete\CreditCardManagers\BaseCreditCardManager.cs" />
+    <Compile Include="Concrete\CreditCardManagers\GarantiCreditCardManager.cs" />
+    <Compile Include="Concrete\CreditCardManagers\IsbankCreditCardManager.cs" />
+    <Compile Include="Concrete\PrintManagers\KonicaMinoltaPrintManager.cs" />
+    <Compile Include="Concrete\PrintManagers\XeroxPrintManager.cs" />
+    <Compile Include="DependencyResolvers\Modules\BusinessModule.cs" />
+    <Compile Include="Concrete\PrintManagers\PrintManagerBase.cs" />
+    <Compile Include="DependencyResolvers\Resolvers\IResolver.cs" />
+    <Compile Include="DependencyResolvers\Resolvers\NinjectCreditCardResolver.cs" />
+    <Compile Include="DependencyResolvers\Resolvers\NinjectResolverBase.cs" />
+    <Compile Include="DependencyResolvers\Resolvers\NinjectPrintManagerResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

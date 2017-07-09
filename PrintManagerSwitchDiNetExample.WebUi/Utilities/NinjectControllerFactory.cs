@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using Ninject.Modules;
 
 namespace PrintManagerSwitchDiNetExample.WebUi.Utilities
 {
@@ -19,12 +15,13 @@ namespace PrintManagerSwitchDiNetExample.WebUi.Utilities
 
         protected override IController GetControllerInstance(RequestContext requestContext, Type controllerType)
         {
-            //Querystring ile gönderilen parametre "query" parametresine eşitleniyor.
-            var query = requestContext.HttpContext.Request.QueryString["Device"];
+            //Querystring'ler resolver factory'e gönderiliyor.
+            //Bu alan headers olacak veya ihtiyaca göre farklı bir parametre olabilir.
+            var queries = requestContext.HttpContext.Request.QueryString;
 
             return controllerType == null
                 ? null
-                :_resolverFactory.GetInstance(controllerType,query);
+                :_resolverFactory.GetInstance(controllerType,queries);
         }
     }
 }
